@@ -12572,7 +12572,7 @@ do
 					task.spawn(function() 
 						while spamming and dashActive do 
 							local currentChar = LocalPlayer.Data.Character.Value
-							local killCount = (currentChar == "Gon") and 20 or 50
+							local killCount = (currentChar == "Gon") and 40 or 100
 							KillAura(killCount)
 							task.wait(0.1) 
 						end 
@@ -12589,7 +12589,7 @@ do
 								task.spawn(function() 
 									while spamming and dashActive do 
 										local currentChar = LocalPlayer.Data.Character.Value
-										local killCount = (currentChar == "Gon") and 20 or 50
+										local killCount = (currentChar == "Gon") and 40 or 100
 										KillAura(killCount)
 										task.wait(0.1) 
 									end 
@@ -12597,7 +12597,7 @@ do
 							end
 						else
 							local currentChar = LocalPlayer.Data.Character.Value
-							local killCount = (currentChar == "Gon") and 20 or 50
+							local killCount = (currentChar == "Gon") and 40 or 100
 							KillAura(killCount)
 						end
 					end
@@ -12614,11 +12614,11 @@ do
 			Name = "Range Radius",
 			Flag = "RangeRadius",
 			Min = 1,
-			Max = 67.5,
+			Max = 200,
 			Default = Cfg.RangeRadius,
 			Round = 1,
 			Callback = function(value)
-				local clamped = math.clamp(value, 1, 67.5)
+				local clamped = math.clamp(value, 1, 200)
 				Cfg.RangeRadius = clamped
 				getgenv().InstantKillRange = clamped
 				if Cfg.ShowRangeCircle then
