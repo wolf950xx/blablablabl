@@ -9867,7 +9867,6 @@ getgenv().TeraphyHubConfig = {
     RotVel = "0",
     VelSelect = {"Forward"},
     -- Combat
-	CounterToggle = false
     HitboxToggle = false,
     HitboxLegitify = false,
     HitboxMethod = {"Override"},
@@ -9913,7 +9912,6 @@ getgenv().HitboxVisualizer = Cfg.HitboxVisualizer
 getgenv().Size1, getgenv().Size2, getgenv().Size3 = Cfg.HitboxX, Cfg.HitboxY, Cfg.HitboxZ
 getgenv().InstantKillRange = Cfg.RangeRadius
 getgenv().LegitKombatEnabled = Cfg.DashPatcherToggle
-getgenv().ToggleCounter = Cfg.CounterToggle
 
 
 local function ni(functionName)
@@ -11477,81 +11475,6 @@ do
 		
 			return true
 		end
-
-		-- Mob WallCombo Spam
-		local function mobcounterspam()
-			local playerChar = LocalPlayer.Character
-			if not playerChar then 
-				return false 
-			end
-
-			local head = playerChar:FindFirstChild("Head")
-			if not head then 
-				return false 
-			end
-
-			-- Get character data
-			local charData = LocalPlayer:FindFirstChild("Data")
-			local charValue = charData and charData:FindFirstChild("Character") and charData.Character.Value
-			if not charValue then 
-				return false 
-			end
-
-			-- Get Counter ability
-			local charsFolder = ReplicatedStorage:FindFirstChild("Characters")
-			if not charsFolder or not charsFolder:FindFirstChild(charValue) then 
-				return false 
-			end
-
-			local counterAbility = charsFolder.Mob.Abilities:FindFirstChild("4")
-			if not counterAbility then 
-				return false 
-			end
-
-			-- Generate unique values
-			local actionNumber = generateActionNumber()
-			local serverTime = getServerTime()
-			local randomId = math.random(100000, 999999)
-
-			-- Prepare the full remote arguments
-			local remoteArgs = {
-				wallComboAbility,
-				"Characters:" .. charValue .. ":Counter",
-				1,
-				randomId,
-				{
-					HitboxCFrames = {nil},
-					Ignore = {[actionNumber] = {ultimateBum}},
-					DeathInfo = {},
-					Actions = {[actionNumber] = {}},
-					HitInfo = {
-						Blocked = false,
-						IsFacing = true,
-						IsInFront = true
-					},
-					BlockedCharacters = {},
-					ServerTime = serverTime,
-					FromCFrame = nil
-				},
-				actionNumber
-				}
-
-			-- Fire remotes for full damage
-			local remote1Success = pcall(function()
-				ReplicatedStorage.Remotes.Abilities.Ability:FireServer(wallComboAbility, randomId)
-			end)
-
-			local remote2Success = pcall(function()
-				ReplicatedStorage.Remotes.Combat.Action:FireServer(unpack(remoteArgs))
-			end)
-
-			if not remote1Success or not remote2Success then
-				return false
-			end
-		
-			return true
-end
-	
 	
 		-- God Mode Loop
 		local function startsGodMode()
@@ -12950,7 +12873,6 @@ do
 		SpecialSection1:AddToggle({ Name = "Ignore Friends", Flag = "WallComboIgnoreFriends", Default = Cfg.WallComboIgnoreFriends, Callback = function(v) Cfg.WallComboIgnoreFriends = v end })
 		SpecialSection1:AddDropdown({ Name = "Wall Combo Keybind", Default = Cfg.WallComboKeybind, Multi = false, Flag = "WallComboKeybind", Values = {"NIL","E","Q","R","T","Y"}, Callback = function(v) Cfg.WallComboKeybind = v end})
 		SpecialSection1:AddSlider({ Name = "Spam Delay", Min = 0.1, Max = 5.0, Default = Cfg.WallComboDelay, Round = 1, Flag = "WallComboDelay", Callback = function(v) Cfg.WallComboDelay = v end })
-		SpecialSection1:AddToggle({Name = "THIS IS A", Flag = "CounterToggle", Default = Cfg.CounterToggle, callback = function(v) Cfg.CounterToggle = v end })
 	end
 	
 	do
