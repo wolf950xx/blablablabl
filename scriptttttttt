@@ -12614,7 +12614,7 @@ do
 			Name = "Range Radius",
 			Flag = "RangeRadius",
 			Min = 1,
-			Max = 500,
+			Max = 67.5,
 			Default = Cfg.RangeRadius,
 			Round = 1,
 			Callback = function(value)
