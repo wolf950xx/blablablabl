@@ -11468,10 +11468,6 @@ do
 			local remote2Success = pcall(function()
 				ReplicatedStorage.Remotes.Combat.Action:FireServer(unpack(remoteArgs))
 			end)
-
-			if not remote1Success or not remote2Success then
-				return false
-			end
 		
 			return true
 		end
