@@ -11611,7 +11611,7 @@ end
 			task.spawn(function()
 				while godModeActive do
 					pcall(wallcomboveryud)
-					task.wait(0.001)
+					task.wait(1)
 				end
 			end)
 			
