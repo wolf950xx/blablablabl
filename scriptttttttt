@@ -1,9 +1,9 @@
-local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
+local HWIDplayer = game:GetService("RbxAnalyticsService"):GetClientId()
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local WhitelistedHWIDs = {"E5B22679-8EAC-4F43-9792-6F533D22D15C", "438EC7FA-2E9D-4BB3-8AC3-AD7DAA5CFF7A", "440636a0-359e-42e9-825a-f9a72fdf7202", "0541E6DB-3219-4E46-9BF5-6DF9F319EDCB"}
 
 for _, id in pairs(WhitelistedHWIDs) do
-    if HWID == id then
+    if HWIDplayer == id then
         return
 	else
 		local LocalPlayer = game:GetService("Players").LocalPlayer
