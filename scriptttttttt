@@ -11825,11 +11825,10 @@ end
 			task.spawn(function()
 				while godModesActive do
 					pcall(wallcomboveryez)
-					task.wait(0.2)
+					task.wait(0.1)
 					pcall(wallcomboveryez1)
-					task.wait(0.2)
+					task.wait(0.1)
 					pcall(wallcomboveryez2)
-					task.wait(0.2)
 				end
 			end)
 			
@@ -12310,28 +12309,29 @@ function AbilitySpam2:UseAbility4()
 end
 
 function AbilitySpam2:Start()
-    if self.enabled then return end
+    if self.connection then return end
     self.enabled = true
-    task.spawn(function()
-        while self.enabled do
+    self.connection = RunService.Heartbeat:Connect(function()
+        if not self.enabled then return end
+        self:UseAbility4()
+        task.wait(0.1)
+        if self.enabled then
             pcall(function()
-                self:UseAbility4()
+                local c = self:GetCurrentCharacter()
+                ReplicatedStorage.Remotes.Abilities.AbilityCanceled:FireServer(
+                    ReplicatedStorage.Characters[c].Abilities["4"]
+                )
             end)
-            task.wait(0.00000000001)
-            if self.enabled then
-                pcall(function()
-                    local c = self:GetCurrentCharacter()
-                    ReplicatedStorage.Remotes.Abilities.AbilityCanceled:FireServer(
-                        ReplicatedStorage.Characters[c].Ultimates["4"]
-                    )
-                end)
-            end
         end
+        task.wait(0.001)
     end)
 end
 
-
 function AbilitySpam2:Stop()
+    if self.connection then
+        self.connection:Disconnect()
+        self.connection = nil
+    end
     self.enabled = false
 end
 
@@ -12474,28 +12474,29 @@ function AbilitySpam3:UseAbility4()
 end
 
 function AbilitySpam3:Start()
-    if self.enabled then return end
+    if self.connection then return end
     self.enabled = true
-    task.spawn(function()
-        while self.enabled do
+    self.connection = RunService.Heartbeat:Connect(function()
+        if not self.enabled then return end
+        self:UseAbility4()
+        task.wait(1)
+        if self.enabled then
             pcall(function()
-                self:UseAbility4()
+                local c = self:GetCurrentCharacter()
+                ReplicatedStorage.Remotes.Abilities.AbilityCanceled:FireServer(
+                    ReplicatedStorage.Characters[c].Abilities["4"]
+                )
             end)
-            task.wait(0.00000000001)
-            if self.enabled then
-                pcall(function()
-                    local c = self:GetCurrentCharacter()
-                    ReplicatedStorage.Remotes.Abilities.AbilityCanceled:FireServer(
-                        ReplicatedStorage.Characters[c].Abilities["4"]
-                    )
-                end)
-            end
         end
+        task.wait(0.001)
     end)
 end
 
-
 function AbilitySpam3:Stop()
+    if self.connection then
+        self.connection:Disconnect()
+        self.connection = nil
+    end
     self.enabled = false
 end
 
