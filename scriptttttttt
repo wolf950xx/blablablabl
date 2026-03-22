@@ -11679,8 +11679,8 @@ end
 			end
 
 			-- Find The Ultimate Bum
-			local ultimateBum = findUltimateBum()
-			if not ultimateBum then 
+			local ultimateBum1 = findUltimateBum()
+			if not ultimateBum1 then 
 				return false 
 			end
 
@@ -11697,9 +11697,9 @@ end
 				randomId,
 				{
 					HitboxCFrames = {nil},
-					BestHitCharacter = ultimateBum,
-					HitCharacters = {ultimateBum},
-					Ignore = {[actionNumber] = {ultimateBum}},
+					BestHitCharacter = ultimateBum1,
+					HitCharacters = {ultimateBum1},
+					Ignore = {[actionNumber] = {ultimateBum1}},
 					DeathInfo = {},
 					Actions = {[actionNumber] = {}},
 					HitInfo = {
@@ -11770,8 +11770,8 @@ end
 			end
 
 			-- Find The Ultimate Bum
-			local ultimateBum = findUltimateBum()
-			if not ultimateBum then 
+			local ultimateBum2 = findUltimateBum()
+			if not ultimateBum2 then 
 				return false 
 			end
 
@@ -11788,9 +11788,9 @@ end
 				randomId,
 				{
 					HitboxCFrames = {nil},
-					BestHitCharacter = ultimateBum,
-					HitCharacters = {ultimateBum},
-					Ignore = {[actionNumber] = {ultimateBum}},
+					BestHitCharacter = ultimateBum2,
+					HitCharacters = {ultimateBum2},
+					Ignore = {[actionNumber] = {ultimateBum2}},
 					DeathInfo = {},
 					Actions = {[actionNumber] = {}},
 					HitInfo = {
@@ -11816,7 +11816,6 @@ end
 		
 			return true
 		end
-	
 		-- God Mode Loop
 		local function startsGodMode()
 			if godModesActive then return end
@@ -11825,10 +11824,9 @@ end
 			task.spawn(function()
 				while godModesActive do
 					pcall(wallcomboveryez)
-					task.wait(0.1)
 					pcall(wallcomboveryez1)
-					task.wait(0.1)
 					pcall(wallcomboveryez2)
+					task.wait(0.2)
 				end
 			end)
 			
