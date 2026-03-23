@@ -12310,7 +12310,7 @@ function AbilitySpam2:Start()
     self.connection = RunService.Heartbeat:Connect(function()
         if not self.enabled then return end
         self:UseAbility4()
-        task.wait(0.1)
+        task.wait(1)
         if self.enabled then
             pcall(function()
                 local c = self:GetCurrentCharacter()
