@@ -11197,6 +11197,163 @@ end
 				AbilitySpam:Stop()
 			end
 		end})
+	local AbilitySpam3 = {
+    enabled = false,
+    connection = nil
+}
+	function AbilitySpam3:GetCurrentCharacter()
+    local ok, res = pcall(function()
+        return LocalPlayer.Data.Character.Value
+    end)
+    if ok and res then return res end
+
+    local char = LocalPlayer.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    return hum and hum:GetAttribute("CharacterName") or "Unknown"
+end
+
+function AbilitySpam3:HasAbility4(characterName)
+    local ok, res = pcall(function()
+        local chars = ReplicatedStorage:WaitForChild("Characters")
+        local folder = chars:FindFirstChild(characterName)
+        local ab = folder and folder:FindFirstChild("Abilities")
+        return ab and ab:FindFirstChild("4") ~= nil
+    end)
+    return ok and res
+end
+
+function AbilitySpam3:FindNearestPlayer()
+    local char = LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil end
+
+    local nearest, dist = nil, math.huge
+    for _,p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local tr = p.Character:FindFirstChild("HumanoidRootPart")
+            local th = p.Character:FindFirstChild("Humanoid")
+			if LocalPlayer:IsFriendsWith(p.UserId) then
+            	continue
+            end
+            if tr and th then
+                local hp = th:GetAttribute("Health")
+                if hp and hp > 0 then
+                    local d = (hrp.Position - tr.Position).Magnitude
+                    if d < dist then
+                        dist = d
+                        nearest = p
+                    end
+                end
+            end
+        end
+    end
+    return nearest
+end
+
+function AbilitySpam3:GetNearestPlayerCFrame()
+    local p = self:FindNearestPlayer()
+    return p and p.Character and p.Character.HumanoidRootPart and p.Character.HumanoidRootPart.CFrame or CFrame.new()
+end
+
+function AbilitySpam3:UseAbility4()
+    local charName = self:GetCurrentCharacter()
+    if not self:HasAbility4(charName) then return end
+
+    local target = self:FindNearestPlayer()
+    if not target then return end
+
+    local targetChar = target.Character
+    local targetCF = self:GetNearestPlayerCFrame()
+
+    pcall(function()
+        local ability = ReplicatedStorage.Characters[charName].Abilities["4"]
+        ReplicatedStorage.Remotes.Abilities.Ability:FireServer(ability,9000000)
+
+        local actions = {377,380,383,384,385,387,389}
+        for i=1,7 do
+            local args = {
+                ability,
+                charName..":Abilities:4",
+                i,
+                9000000,
+                {
+                    HitboxCFrames = {targetCF,targetCF},
+                    BestHitCharacter = targetChar,
+                    HitCharacters = {targetChar},
+                    Ignore = i>2 and {ActionNumber1={targetChar}} or {},
+                    DeathInfo = {},
+                    BlockedCharacters = {},
+                    HitInfo = {
+                        IsFacing = not (i==1 or i==2),
+                        IsInFront = i<=2,
+                        Blocked = i>2 and false or nil
+                    },
+                    ServerTime = tick(),
+                    Actions = i>2 and {ActionNumber1={}} or {},
+                    FromCFrame = targetCF
+                },
+                "Action"..actions[i],
+                i==2 and 0.1 or nil
+            }
+
+            if i==7 then
+                args[5].RockCFrame = targetCF
+                args[5].Actions = {
+                    ActionNumber1 = {
+                        [target.Name] = {
+                            StartCFrameStr = tostring(targetCF.X)..","..tostring(targetCF.Y)..","..tostring(targetCF.Z)..",0,0,0,0,0,0,0,0,0",
+                            ImpulseVelocity = Vector3.new(1901,-25000,291),
+                            AbilityName = "4",
+                            RotVelocityStr = "0,0,0",
+                            VelocityStr = "1.900635,0.010867,0.291061",
+                            Duration = 2,
+                            RotImpulseVelocity = Vector3.new(5868,-6649,-7414),
+                            Seed = math.random(1,1e6),
+                            LookVectorStr = "0.988493,0,0.151268"
+                        }
+                    }
+                }
+            end
+
+            ReplicatedStorage.Remotes.Combat.Action:FireServer(unpack(args))
+        end
+    end)
+end
+
+function AbilitySpam3:Start()
+    if self.enabled then return end
+    self.enabled = true
+    task.spawn(function()
+        while self.enabled do
+            pcall(function()
+                self:UseAbility4()
+            end)
+            task.wait(0.1)
+            if self.enabled then
+                pcall(function()
+                    local c = self:GetCurrentCharacter()
+                    ReplicatedStorage.Remotes.Abilities.AbilityCanceled:FireServer(
+                        ReplicatedStorage.Characters[c].Abilities["4"]
+                    )
+                end)
+            end
+        end
+    end)
+end
+
+
+function AbilitySpam3:Stop()
+    self.enabled = false
+end
+	
+		ExploitSection:AddToggle({ Name = "kill aura v4(best with mob)", Flag = "AutoBlock1", Default = Cfg.AutoBlock1, Callback = function(v)
+			Cfg.AutoBlock1 = v
+			if v then
+				AbilitySpam3:Start()
+			else
+				AbilitySpam3:Stop()
+			end
+		end})
 	
 		local isInvisible = false
 		local platform = nil
@@ -11818,6 +11975,106 @@ end
 		
 			return true
 		end
+
+		local function wallcomboveryez3()
+			local function GetClosestPlayer()
+				local closest
+				local shortest = math.huge
+				local lpChar = LocalPlayer.Character
+				local lpHRP = lpChar and lpChar:FindFirstChild("HumanoidRootPart")
+				if not lpHRP then return nil end
+
+				for _, plr in ipairs(Players:GetPlayers()) do
+					if plr ~= LocalPlayer then
+						local char = plr.Character
+						local hum = char and char:FindFirstChildOfClass("Humanoid")
+						local hrp = char and char:FindFirstChild("HumanoidRootPart")
+						if hum and hrp and hum.Health > 0 then
+							local dist = (hrp.Position - lpHRP.Position).Magnitude
+							if dist < shortest then
+								shortest = dist
+								closest = plr
+							end
+						end
+					end
+				end
+				return closest
+			end
+			local playerChar = LocalPlayer.Character
+			if not playerChar then 
+				return false 
+			end
+
+			local head = playerChar:FindFirstChild("Head")
+			if not head then 
+				return false 
+			end
+
+			-- Get character data
+			local charData = LocalPlayer:FindFirstChild("Data")
+			local charValue = charData and charData:FindFirstChild("Character") and charData.Character.Value
+			if not charValue then 
+				return false 
+			end
+
+			-- Get WallCombo ability
+			local charsFolder = ReplicatedStorage:FindFirstChild("Characters")
+			if not charsFolder or not charsFolder:FindFirstChild(charValue) then 
+				return false 
+			end
+
+			local wallComboAbility = charsFolder[charValue]:FindFirstChild("WallCombo")
+			if not wallComboAbility then 
+				return false 
+			end
+
+			-- Find The Ultimate Bum
+			local ultimateBum3 = GetClosestPlayer()
+			if not ultimateBum3 then 
+				return false 
+			end
+
+			-- Generate unique values
+			local actionNumber = generateActionNumber()
+			local serverTime = getServerTime()
+			local randomId = math.random(100000, 999999)
+
+			-- Prepare the full remote arguments
+			local remoteArgs = {
+				wallComboAbility,
+				"Characters:" .. charValue .. ":WallCombo",
+				1,
+				randomId,
+				{
+					HitboxCFrames = {nil},
+					BestHitCharacter = ultimateBum3.Character,
+					HitCharacters = {ultimateBum3.Character},
+					Ignore = {[actionNumber] = {ultimateBum3.Character}},
+					DeathInfo = {},
+					Actions = {[actionNumber] = {}},
+					HitInfo = {
+						Blocked = false,
+						IsFacing = true,
+						IsInFront = true
+					},
+					BlockedCharacters = {},
+					ServerTime = serverTime,
+					FromCFrame = nil
+				},
+				actionNumber
+			}
+
+			-- Fire remotes for full damage
+			local remote1Success = pcall(function()
+				ReplicatedStorage.Remotes.Abilities.Ability:FireServer(wallComboAbility, randomId)
+			end)
+
+			local remote2Success = pcall(function()
+				ReplicatedStorage.Remotes.Combat.Action:FireServer(unpack(remoteArgs))
+			end)
+		
+			return true
+		end
 		-- God Mode Loop
 		local function startsGodMode()
 			if godModesActive then return end
@@ -11826,9 +12083,13 @@ end
 			task.spawn(function()
 				while godModesActive do
 					pcall(wallcomboveryez)
+					task.wait(0.05)
 					pcall(wallcomboveryez1)
+					task.wait(0.05)
 					pcall(wallcomboveryez2)
-					task.wait(0.2)
+					task.wait(0.05)
+					pcall(wallcomboveryez3)
+					task.wait(0.05)
 				end
 			end)
 			
@@ -12513,7 +12774,7 @@ end
 
 		
 		
-		-- Anti Server Lagger
+-- Anti Server Lagger
 		local antiSLEnabled = false
 		local antiSLConnection = nil
 		local PlayerCache = {}
@@ -12698,20 +12959,72 @@ end
 			end
 		end
 		
+		local function startAnti4ServerLagger()
+			if antiSLEnabled then return end
+			antiSLEnabled = true
+			Cfg.AntiServerLagger = true
+			
+			-- Save effects first
+			pcall(saveEffectsAntiSL)
+			
+			-- Remove effects
+			pcall(removeEffectsAntiSL)
+			
+			-- Setup player tracking
+			Players.PlayerAdded:Connect(OnPlayerAdded)
+			Players.PlayerRemoving:Connect(OnPlayerRemoving)
+			
+			for _, player in ipairs(Players:GetPlayers()) do
+				OnPlayerAdded(player)
+			end
+			
+			-- Start visibility updates
+			antiSLConnection = RunService.RenderStepped:Connect(UpdatePlayerVisibility)
+			
+			showNotification("Server Lagger", "Anti Server Lagger: ON")
+		end
+		
+		local function stopAnti4ServerLagger()
+			if not antiSLEnabled then return end
+			antiSLEnabled = false
+			Cfg.AntiServerLagger = false
+			
+			-- Restore effects
+			pcall(restoreEffectsAntiSL)
+			
+			-- Show all players
+			ForceShowAllPlayers()
+			
+			-- Disconnect connection
+			if antiSLConnection then
+				antiSLConnection:Disconnect()
+				antiSLConnection = nil
+			end
+			
+			-- Clear player cache
+			PlayerCache = {}
+			
+			showNotification("Server Lagger", "Anti Server Lagger: OFF")
+		end
+		
+		ServerLaggerSection:AddToggle({
+			Name = "Anti Server Lagger(old)",
+			Flag = "Anti4ServerLagger",
+			Default = Cfg.Anti4ServerLagger or false,
+			Callback = function(v)
+				Cfg.Anti4ServerLagger = v
+				if v then
+					startAnti4ServerLagger()
+				else
+					stopAnti4ServerLagger()
+				end
+			end
+		})
 		local function startAntiServerLagger()
-			game:GetService("ReplicatedStorage").Characters.Mob.Abilities["4"].MobCounter:Destroy()
-			game:GetService("ReplicatedStorage").Characters.Mob.Abilities["4"].MobCounterAttack:Destroy()
-			game:GetService("ReplicatedStorage").Characters.Mob.Abilities["4"].MobCounterBubble:Destroy()
 			game:GetService("ReplicatedStorage").Characters.Mob.WallCombo.MobWallCombo:Destroy()
 			game:GetService("ReplicatedStorage").Characters.Gon.WallCombo.GonWallCombo:Destroy()
-			game:GetService("ReplicatedStorage").Characters.Nanami.WallCombo.NanamiWallCombo:Destroy()
 			game:GetService("SoundService").All.Sounds.GonWallCombo:Destroy()
 			game:GetService("SoundService").All.Sounds.MobWallCombo:Destroy()
-			game:GetService("SoundService").All.Sounds.NanamiWallCombo:Destroy()
-			game:GetService("SoundService").All.Sounds.MobClairvoyance:Destroy()
-			game:GetService("SoundService").All.Sounds.MobClairvoyanceCounter:Destroy()
-			game:GetService("SoundService").All.Sounds.MobClairvoyanceNoCounter:Destroy()
-			
 			showNotification("Server Lagger", "Anti Server Lagger: ON")
 		end
 		
@@ -12720,7 +13033,7 @@ end
 		end
 		
 		ServerLaggerSection:AddToggle({
-			Name = "Anti Server Lagger(breaks godmode only use with killaura v3)",
+			Name = "Anti Server Lagger wallcombo1(breaks gon and mob wallcombo)",
 			Flag = "AntiServerLagger",
 			Default = Cfg.AntiServerLagger or false,
 			Callback = function(v)
@@ -12729,6 +13042,56 @@ end
 					startAntiServerLagger()
 				else
 					stopAntiServerLagger()
+				end
+			end
+		})	
+		local function startAnti2ServerLagger()
+			game:GetService("ReplicatedStorage").Characters.Mob.Abilities["4"].MobCounter:Destroy()
+			game:GetService("ReplicatedStorage").Characters.Mob.Abilities["4"].MobCounterAttack:Destroy()
+			game:GetService("ReplicatedStorage").Characters.Mob.Abilities["4"].MobCounterBubble:Destroy()
+			game:GetService("SoundService").All.Sounds.MobClairvoyance:Destroy()
+			game:GetService("SoundService").All.Sounds.MobClairvoyanceCounter:Destroy()
+			game:GetService("SoundService").All.Sounds.MobClairvoyanceNoCounter:Destroy()
+			showNotification("Server Lagger", "Anti Server Lagger: ON")
+		end
+		
+		local function stopAnti2ServerLagger()
+			showNotification("Server Lagger", "Anti Server Lagger: OFF")
+		end
+		
+		ServerLaggerSection:AddToggle({
+			Name = "Anti Server Lagger mob counter(breaks server lagger 4)",
+			Flag = "Anti2ServerLagger",
+			Default = Cfg.Anti2ServerLagger or false,
+			Callback = function(v)
+				Cfg.Anti2ServerLagger = v
+				if v then
+					startAnti2ServerLagger()
+				else
+					stopAnti2ServerLagger()
+				end
+			end
+		})
+		local function startAnti3ServerLagger()
+			game:GetService("ReplicatedStorage").Characters.Nanami.WallCombo.NanamiWallCombo:Destroy()
+			game:GetService("SoundService").All.Sounds.NanamiWallCombo:Destroy()	
+			showNotification("Server Lagger", "Anti Server Lagger: ON")
+		end
+		
+		local function stopAnti3ServerLagger()
+			showNotification("Server Lagger", "Anti Server Lagger: OFF")
+		end
+		
+		ServerLaggerSection:AddToggle({
+			Name = "Anti Server Lagger wallcombo2(breaks nanami wallcombo)",
+			Flag = "Anti3ServerLagger",
+			Default = Cfg.Anti3ServerLagger or false,
+			Callback = function(v)
+				Cfg.Anti3ServerLagger = v
+				if v then
+					startAnti3ServerLagger()
+				else
+					stopAnti3ServerLagger()
 				end
 			end
 		})
