@@ -9999,34 +9999,7 @@ Notifier.new({
 	Icon = "rbxassetid://78342669010819"
 })
 do
-	local Watermark = Window:Watermark()
-
-	Watermark:AddText({
-		Icon = "user",
-		Text = LocalPlayer.Name,
-	})
-
-	Watermark:AddText({
-		Icon = "clock",
-		Text = Compkiller:GetDate(),
-	})
-
-	local Time = Watermark:AddText({
-		Icon = "timer",
-		Text = "TIME",
-	})
-
-	task.spawn(function()
-		while true do
-			task.wait()
-			Time:SetText(Compkiller:GetTimeNow())
-		end
-	end)
-
-	Watermark:AddText({
-		Icon = "server",
-		Text = Compkiller.Version,
-	})
+	
 end
 local DualTab1 = Window:DrawContainerTab({ Name = "Combat", Icon = "skull", EnableScrolling = true })
 local DualTab2 = Window:DrawContainerTab({ Name = "Visuals", Icon = "eye", EnableScrolling = true })
