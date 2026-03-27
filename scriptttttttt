@@ -20,7 +20,7 @@ for _, id in pairs(WhitelistedHWIDs) do
 end
 
 if not isWhitelisted then
-    LocalPlayer:Kick("you are not whitelisted")
+    LocalPlayer:Kick("Due to you hating on tea and being on the Coffee team, you aren't allowed to use Tea Hub.")
 end
 
 local CompKillerLib = [=[
@@ -9966,12 +9966,12 @@ local ConfigManager = Compkiller:ConfigManager({
 })
 
 -- Loading UI with custom icon and duration
-Compkiller:Loader("rbxassetid://78342669010819", 2.5).yield()
+Compkiller:Loader("rbxassetid://138259269816887", 2.5).yield()
 
 local Window = Compkiller.new({
-	Name = "Teraphy Hub",
+	Name = "Tea Hub",
 	Keybind = "LeftAlt",
-	Logo = "rbxassetid://78342669010819",
+	Logo = "rbxassetid://138259269816887",
 	Scale = Compkiller.Scale.Window,
 	TextSize = 15,
 	Theme = {
@@ -9985,10 +9985,10 @@ local Window = Compkiller.new({
 
 -- Welcome Notification
 Notifier.new({
-	Title = "Teraphy Hub",
+	Title = "Tea Hub",
 	Content = "Welcome! Press Left Alt to open/close the menu.",
 	Duration = 5,
-	Icon = "rbxassetid://78342669010819"
+	Icon = "rbxassetid://138259269816887"
 })
 
 -- Patchedval Notification
@@ -9996,7 +9996,7 @@ Notifier.new({
 	Title = "Info",
 	Content = "Hi i'm patchedval and i put this cool notification here",
 	Duration = 4,
-	Icon = "rbxassetid://78342669010819"
+	Icon = "rbxassetid://138259269816887"
 })
 do
 	
