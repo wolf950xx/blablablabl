@@ -11019,6 +11019,23 @@ do
     connection = nil
 }
 
+local function autoBlockLoop()
+			local remoteEvent = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Combat"):WaitForChild("Block")
+			while Cfg.AutoBlock do
+				pcall(function()
+					remoteEvent:FireServer(true)
+				end)
+				task.wait(0.1)
+			end
+		end
+	
+		ExploitSection:AddToggle({ Name = "Auto Block", Flag = "AutoBlock", Default = Cfg.AutoBlock, Callback = function(v)
+			Cfg.AutoBlock = v
+			if v then
+				task.spawn(autoBlockLoop)
+			end
+		end})
+
 function AbilitySpam:GetCurrentCharacter()
     local ok, res = pcall(function()
         return LocalPlayer.Data.Character.Value
